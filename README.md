@@ -22,4 +22,17 @@ The following is the initial sketch I fed to ChatGPT in order to get some help f
 
 > We want some sort of "user interface", so that a human can "watch the agents play" in real-time, basically reading the messages they exchange.
 
-> We want to somehow recreate the fact that whatever the GM or a player says at the table, that is heard by everyone else at the table. For now, we will not implement the possibility for the GM to share confidential information with a subset of PCs, but we still want to think of a solution for it - let's say this will be in phase 2. 
+> We want to somehow recreate the fact that whatever the GM or a player says at the table, that is heard by everyone else at the table. For now, we will not implement the possibility for the GM to share confidential information with a subset of PCs, but we still want to think of a solution for it - let's say this will be in phase 2.
+
+## Architecture of the solution
+
+I tried to approach this pet project with an enterprise-grade methodology, since the purpose here is to get somewhat ready for when I will _actually_ need to do this in an enterprise context.
+
+As a consequence, the solution has been laid out following the usual IT architecture artifacts:
+
+- [Requirements and constraints](docs/REQUIREMENTS.md)
+- [Use case model](docs/USE_CASES.md)
+- [System context diagram](docs/SYSTEM_CONTEXT.md)
+- [Architecture overview](docs/ARCH_OVERVIEW.md)
+- [Component model](docs/COMPONENT_MODEL.md)
+- [Physical model](docs/PHYSICAL_MODEL.md)
