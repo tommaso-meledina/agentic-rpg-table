@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
+  echo "merge commit detected, skipping pre-commit checks."
+  exit 0
+fi
+if command -v npx >/dev/null 2>&1; then
+  npx --yes node-autochglog
+  git add RELEASE_NOTES.md
+else
+  echo "WARN: skipping changelog generation because 'npx' is not on path"
+fi

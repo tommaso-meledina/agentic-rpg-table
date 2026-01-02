@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
+  echo "Merge commit detected, skipping pre-commit checks."
+  exit 0
+fi
+
+# Regex for Conventional Commit messages
+commit_regex="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\w+\))?!?: .{1,}$"
+
+# Read commit message
+commit_msg=$(cat "$1")
+
+# Validate message
+if ! echo "$commit_msg" | grep -Eq "$commit_regex"; then
+    echo "❌ Commit message does not follow Conventional Commits!"
+    echo ""
+    echo "✅ Expected format:"
+    echo "   type(scope)?: description"
+    echo ""
+    echo "🔹 Examples:"
+    echo "   feat(auth): add login API"
+    echo "   fix(ui): resolve button alignment issue"
+    echo "   docs: update README with usage instructions"
+    echo ""
+    echo "🔗 Reference: https://www.conventionalcommits.org/"
+    exit 1
+else
+  echo 'Commit message is OK'
+fi

@@ -36,3 +36,11 @@ As a consequence, the solution has been laid out following the usual IT architec
 - [Architecture overview](docs/ARCH_OVERVIEW.md)
 - [Component model](docs/COMPONENT_MODEL.md)
 - [Physical model](docs/PHYSICAL_MODEL.md)
+
+## Hooks config
+
+This project uses git hooks in order to run some operations automatically. In order to enable the hooks, run the following command in the root directory of the project.
+
+```bash
+git config core.hooksPath .githooks
+```
