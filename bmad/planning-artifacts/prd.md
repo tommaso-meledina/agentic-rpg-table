@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping']
 inputDocuments: ['BRIEF.md']
 workflowType: 'prd'
 briefCount: 1
@@ -257,3 +257,75 @@ Jordan sees a link shared on social media: "Watch AI agents play D&D in real-tim
 - **Real-time Library:** WebSocket client library or SSE implementation
 - **Message Format:** Structured message format (JSON) with agent identity, timestamps, content
 - **Session Management:** Ability to start new sessions, view existing sessions, resume from chronicle
+
+## Project Scoping & Phased Development
+
+### MVP Strategy & Philosophy
+
+**MVP Approach:** Experience MVP - Focus on delivering the core entertainment value of watching AI agents play TTRPGs coherently. The MVP must demonstrate that the system works end-to-end and provides the "wow factor" of seeing agents follow rules and interact meaningfully.
+
+**Core Value Proposition:** "Wow, the AI is playing D&D realistically, the future is now!"
+
+**MVP Success Criteria:** 
+- Developers can observe agents playing a coherent game session
+- Agents follow RPG rules correctly
+- System demonstrates technical feasibility of multi-agent coordination
+- Entertainment value is evident even through console observation
+
+### MVP Feature Set (Phase 1)
+
+**Core User Journeys Supported:**
+- Developer Journey: Console-based observation of agent interactions
+
+**Must-Have Capabilities:**
+- 1 GM agent + 1 PC agent
+- Dedicated MCP Server hosting tools and resources:
+  - Deterministic operations (dice rolling logic)
+  - Static resources (RPG rulebook, sourcebooks with setting/lore)
+- Console-based observation (tail logs or equivalent)
+- Basic message exchange between agents
+- Agents follow core RPG rules
+- Complete game sessions run end-to-end
+- Clear message formatting showing agent identity and content
+- System initialization feedback (agents loading, MCP Server connecting)
+- Dice roll visibility in logs
+
+**Out of Scope for MVP:**
+- Authentication/authorization
+- Session persistence (chronicle system)
+- Web UI
+- Multiple PC agents
+- Character sheets and personality systems
+- Advanced features
+
+### Post-MVP Features
+
+**Phase 2 (Growth - Multi-Player Support):**
+- Support for multiple PC agents (2+ players)
+- Each PC agent operates independently
+- GM coordinates with multiple players simultaneously
+- Message broadcasting: All agents hear what's said at the table
+
+**Phase 3 (Growth - Personality & Character System):**
+- Agent personalities: Each PC agent has distinct personality traits
+- Character sheets: Each PC has detailed character information (stats, background, quirks)
+- Character personalities: Characters have their own flavor/personality separate from agent personality
+- Agents play according to their character sheets
+- Different players have different personalities
+
+**Phase 4 (Growth - Authentication & Authorization):**
+- Elegant auth/authz system mimicking TTRPG table dynamics:
+  - Everyone knows the rules (public resources accessible to all)
+  - Only GM knows story secrets (restricted GM resources - adventure plots, NPC stats)
+  - Each PC knows only their own character sheet (individual PC resources)
+- Resource access control enforced properly
+- GM has access to restricted additional resources via MCP Server
+
+**Phase 5 (Growth - Web UI & Session Persistence):**
+- Web UI for real-time observation of agent interactions
+- Chronicle system: Session persistence allowing resumption between sessions
+- Complete session history tracking
+- Human can "watch the agents play" in real-time by reading messages they exchange
+- Real-time message streaming (WebSocket/SSE)
+- Session management (start new, view existing, resume from chronicle)
+- WCAG accessibility compliance
