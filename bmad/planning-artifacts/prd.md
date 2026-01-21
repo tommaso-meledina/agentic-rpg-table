@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional', 'step-10-nonfunctional']
 inputDocuments: ['BRIEF.md']
 workflowType: 'prd'
 briefCount: 1
@@ -408,3 +408,31 @@ Jordan sees a link shared on social media: "Watch AI agents play D&D in real-tim
 - FR48: System can track complete session history
 - FR49: System can persist all relevant events from a session
 - FR50: Users can view session history via web UI (Growth)
+
+## Non-Functional Requirements
+
+### Performance
+
+- NFR1: System should process and display agent messages as fast as possible
+- NFR2: Real-time message streaming should minimize latency between message generation and display (Growth)
+- NFR3: Performance optimization should not warp the solution architecture
+- NFR4: Dice roll operations via MCP Server should complete without noticeable delay
+
+### Scalability
+
+- NFR5: System should support scaling from 1 PC agent to a few PC agents (2-4) without architectural changes
+- NFR6: Multi-agent coordination should remain stable as number of PC agents increases (Growth)
+
+### Accessibility
+
+- NFR7: Web UI should comply with WCAG AAA accessibility standards (Growth)
+- NFR8: Simple UI design should facilitate achieving AAA compliance
+- NFR9: All web UI interactions should be accessible via keyboard navigation (Growth)
+- NFR10: Screen readers should be able to access and read all agent messages (Growth)
+
+### Reliability
+
+- NFR11: System should handle errors gracefully without crashing game sessions
+- NFR12: Session persistence should allow resuming from last saved state if system fails (Growth)
+- NFR13: Chronicle system should reliably save all session events (Growth)
+- NFR14: System should recover gracefully from MCP Server connection failures
