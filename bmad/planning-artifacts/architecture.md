@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3, 4]
+stepsCompleted: [1, 2, 3, 4, 5]
 inputDocuments: ['BRIEF.md', 'bmad/planning-artifacts/prd.md']
 workflowType: 'architecture'
 project_name: 'agentic-rpg-table'
@@ -280,3 +280,198 @@ npx create-next-app@latest agentic-rpg-frontend --typescript --app --src-dir --t
 - Session manager coordinates message bus and agent services
 - Chronicle storage (Growth) depends on message schema and Prisma setup
 - SSE endpoint (Growth) depends on message bus for real-time updates
+
+## Implementation Patterns & Consistency Rules
+
+### Pattern Categories Defined
+
+**Critical Conflict Points Identified:**
+5 major areas where AI agents could make different choices: naming conventions, project structure, API formats, communication patterns, and process patterns.
+
+### Naming Patterns
+
+**Database Naming Conventions:**
+- Tables: UPPER_SNAKE_CASE (e.g., `SESSIONS`, `MESSAGES`, `DICE_ROLLS`)
+- Columns: lower_snake_case (e.g., `agent_name`, `created_at`, `is_active`)
+- Foreign keys: `{table}_id` format (e.g., `session_id`, `agent_id`)
+- Indexes: `idx_{table}_{column}` format (e.g., `idx_sessions_agent_id`)
+- Enforced via Prisma `@@map` and `@map` attributes
+
+**API Naming Conventions:**
+- REST endpoints: Always nouns
+  - Plural for collections: `GET /sessions`, `PUT /sessions/{id}`, `DELETE /sessions/{id}`
+  - Singular for singletons: `POST /start`, `GET /status`, `POST /stop`
+- Route parameters: `:id` format (e.g., `/sessions/:id`)
+- Query parameters: camelCase (e.g., `?agentId=123&limit=10`)
+- Headers: kebab-case with `X-` prefix for custom headers (e.g., `X-Agent-Id`)
+
+**Code Naming Conventions:**
+- Components: PascalCase (e.g., `SessionCard`, `MessageList`)
+- Files: kebab-case matching component name (e.g., `session-card.tsx`, `message-list.tsx`)
+- Functions: camelCase (e.g., `getSessionById`, `createMessage`)
+- Variables: camelCase (e.g., `agentId`, `sessionState`)
+- Constants: UPPER_SNAKE_CASE (e.g., `MAX_AGENTS`, `DEFAULT_TIMEOUT`)
+- Boolean properties: `is` prefix (e.g., `isLoading`, `isActive`, `isComplete`)
+
+### Structure Patterns
+
+**Project Organization:**
+- Tests: Co-located with source files (e.g., `session.service.spec.ts` next to `session.service.ts`)
+- Components: Organized by feature in `src/features/` (e.g., `src/features/sessions/`, `src/features/messages/`)
+- Shared utilities: `src/common/` or `src/shared/`
+- Services: NestJS modules in `src/modules/` or feature-based organization
+
+**File Structure:**
+- Config: `src/config/` directory with environment-specific files
+- Static assets: `public/` for Next.js, `assets/` for NestJS
+- Documentation: `docs/` at project root
+- Environment files: `.env.example` at root, `.env.local` for local development
+
+### Format Patterns
+
+**API Response Formats:**
+- Success: Direct data (no wrapper) - `{ id: "123", name: "Session 1" }`
+- Error: Structured error object - `{ error: { code: "SESSION_NOT_FOUND", message: "Session not found" } }`
+- Base response classes: Write once, reuse across codebase using hierarchy/polymorphism
+  - Base success/error response classes with common structure
+  - Extend for specific response types
+  - Leverage TypeScript interfaces/classes for type safety
+- Date format: ISO 8601 strings (e.g., `"2026-01-22T12:00:00Z"`)
+- Pagination: `{ data: [...], pagination: { page, limit, total } }`
+- Boolean properties: Always use `is` prefix (e.g., `isActive`, `isLoading`, `isComplete`)
+
+**Data Exchange Formats:**
+- JSON field naming: camelCase in API responses (matches TypeScript)
+- Booleans: `true`/`false` (not `1`/`0`), with `is` prefix for property names
+- Null handling: Use `null` (not `undefined` or empty strings)
+- Arrays: Always arrays, never single-item objects
+
+### Communication Patterns
+
+**Event System:**
+- Event naming: kebab-case with domain prefix (e.g., `session:created`, `message:broadcast`, `dice:rolled`)
+- Event payload: `{ type: "session:created", data: {...}, timestamp: "..." }`
+- Event versioning: Include version in event type if needed (e.g., `session:created:v1`)
+
+**State Management:**
+- State updates: Immutable updates (create new objects, don't mutate)
+- Action naming: `verbNoun` pattern (e.g., `createSession`, `updateMessage`)
+- State organization: Feature-based slices/modules
+- Boolean state properties: Use `is` prefix (e.g., `isLoading`, `isError`)
+
+### Process Patterns
+
+**Error Handling:**
+- Global error handler: NestJS exception filters for HTTP errors
+- User-facing errors: Friendly messages, log technical details
+- Logging vs user errors: Distinguish between logged errors and user-visible errors
+- Error codes: Use consistent error code format (e.g., `SESSION_NOT_FOUND`, `MCP_CONNECTION_FAILED`)
+- Base error classes: Write once, reuse via inheritance/polymorphism
+
+**Loading States:**
+- Loading state naming: `isLoading` or `loading` (boolean with `is` prefix preferred)
+- Global vs local: Prefer local loading states per feature/component
+- Loading UI: Consistent loading indicators/spinners
+
+### Enforcement Guidelines
+
+**All AI Agents MUST:**
+
+- Follow the naming conventions defined above (database, API, code)
+- Use the established project structure patterns
+- Adhere to API response format standards with base response classes (hierarchy/polymorphism)
+- Use consistent event naming and payload structures
+- Implement error handling according to defined patterns with base error classes
+- Follow the database naming strategy via Prisma mappings
+- Use `is` prefix for all boolean properties
+- **Adhere to the GitFlow process outlined in BRIEF.md:**
+  - Pick an issue (ensure no unsatisfied dependencies)
+  - Claim assignment
+  - Create a new branch from the default branch, following the conventional commit convention + issue number (e.g., `feat/11`, `fix/43`, etc.)
+  - Work on the new branch, executing commit and push at every step (always following the Conventional Commits spec)
+  - When all acceptance criteria are met, open a PR against the default branch, using the PR template that is available
+
+**Pattern Enforcement:**
+- ESLint rules for code naming conventions
+- Prisma schema validation for database naming
+- API contract tests for response formats
+- Code review checklist for pattern compliance
+- Document pattern violations in PR reviews
+- Git hooks configured via `.githooks` directory (run `git config core.hooksPath .githooks`)
+
+### Pattern Examples
+
+**Good Examples:**
+
+```typescript
+// Component naming
+export const SessionCard: React.FC<Props> = () => { ... }
+
+// File naming: session-card.tsx
+
+// API endpoint: GET /sessions/:id (plural for collection)
+// API endpoint: POST /start (singular for singleton)
+
+// Boolean property with is prefix
+interface Session {
+  id: string;
+  isActive: boolean;  // CORRECT
+  isLoading: boolean; // CORRECT
+}
+
+// Base response class (write once, reuse)
+abstract class BaseResponse {
+  success: boolean;
+  timestamp: string;
+}
+
+class SuccessResponse<T> extends BaseResponse {
+  success = true;
+  data: T;
+}
+
+class ErrorResponse extends BaseResponse {
+  success = false;
+  error: { code: string; message: string };
+}
+
+// Event naming: session:created
+eventBus.emit('session:created', { sessionId, timestamp });
+
+// Database table: SESSIONS (via @@map)
+model Session {
+  id String @id @map("id")
+  agentName String @map("agent_name")
+  isActive Boolean @map("is_active")
+  @@map("SESSIONS")
+}
+```
+
+**Anti-Patterns:**
+
+```typescript
+// ❌ Inconsistent naming
+export const session_card = () => { ... }  // snake_case
+export const SessionCard = () => { ... }   // PascalCase - CORRECT
+
+// ❌ Boolean without is prefix
+interface Session {
+  active: boolean;  // WRONG
+  loading: boolean; // WRONG
+  isActive: boolean;  // CORRECT
+  isLoading: boolean; // CORRECT
+}
+
+// ❌ Wrapped success responses (unless using base class hierarchy)
+{ data: { session: {...} } }  // Unnecessary wrapper if not using base classes
+{ id: "...", name: "..." }    // Direct response - CORRECT
+
+// ❌ Mutating state
+state.messages.push(newMessage);  // Mutation
+state = { ...state, messages: [...state.messages, newMessage] };  // Immutable - CORRECT
+
+// ❌ Inconsistent API naming
+GET /session/:id  // Singular for collection - WRONG
+GET /sessions/:id // Plural for collection - CORRECT
+POST /start       // Singular for singleton - CORRECT
+```
