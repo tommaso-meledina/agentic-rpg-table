@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type']
 inputDocuments: ['BRIEF.md']
 workflowType: 'prd'
 briefCount: 1
@@ -209,3 +209,51 @@ Jordan sees a link shared on social media: "Watch AI agents play D&D in real-tim
 - Session state management
 - Message persistence (chronicle system)
 - System reliability (sessions don't crash mid-game)
+
+## Web App Specific Requirements
+
+### Project-Type Overview
+
+- Single Page Application (SPA) for real-time observation of agent interactions
+- Minimal UI focused on displaying agent messages chronologically
+- Backend-focused architecture with web UI as observational interface
+
+### Technical Architecture Considerations
+
+- **Architecture Pattern:** SPA with real-time message streaming
+- **Real-time Communication:** WebSocket or Server-Sent Events for live message updates
+- **State Management:** Client-side state for message history and session management
+- **Backend API:** RESTful or GraphQL API for session management and chronicle access
+
+### Browser Support
+
+- **Target:** Modern browsers only (Chrome, Firefox, Safari, Edge - latest 2 versions)
+- **No Support:** Legacy browsers, niche browsers, or older versions
+- **Rationale:** Focus on modern web standards for real-time features
+
+### Real-time Requirements
+
+- **MVP:** Not applicable (console-based observation)
+- **Growth:** Real-time message streaming from backend to web UI
+- **Update Frequency:** Messages appear as agents generate them (near-instant)
+- **Connection Management:** Handle reconnection on network issues
+- **Message Ordering:** Ensure chronological message display
+
+### Accessibility
+
+- **MVP:** Not applicable (console-based)
+- **Growth:** WCAG compliance (level to be determined)
+- **Key Areas:** Screen reader support, keyboard navigation, message readability
+
+### Performance Targets
+
+- **Message Rendering:** Smooth scrolling as new messages arrive
+- **Session History:** Efficient loading of chronicle/session history
+- **Responsive Design:** Works on desktop and tablet (mobile optional)
+
+### Implementation Considerations
+
+- **Framework:** Modern SPA framework (React, Vue, or similar)
+- **Real-time Library:** WebSocket client library or SSE implementation
+- **Message Format:** Structured message format (JSON) with agent identity, timestamps, content
+- **Session Management:** Ability to start new sessions, view existing sessions, resume from chronicle
