@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3]
+stepsCompleted: [1, 2, 3, 4]
 inputDocuments: ['BRIEF.md', 'bmad/planning-artifacts/prd.md']
 workflowType: 'architecture'
 project_name: 'agentic-rpg-table'
@@ -140,3 +140,143 @@ npx create-next-app@latest agentic-rpg-frontend --typescript --app --src-dir --t
 - MCP Servers: `uv` provides fast dependency resolution and virtual environment management
 
 **Note:** Project initialization using these commands should be the first implementation story.
+
+## Core Architectural Decisions
+
+### Decision Priority Analysis
+
+**Critical Decisions (Block Implementation):**
+
+1. **Database Abstraction:** Prisma 7.2.0 with PostgreSQL
+   - Type-safe queries, migration system, excellent developer experience
+   - PostgreSQL chosen for reliability and feature set
+
+2. **MCP Client Integration:** @modelcontextprotocol/sdk v1.17.5 with Streamable HTTP transport
+   - Official TypeScript SDK for MCP protocol
+   - Streamable HTTP transport for production-ready remote communication
+   - No stdio transport - HTTP from the beginning
+
+3. **Agent Orchestration:** Event-driven architecture with message bus and centralized session manager
+   - Message bus for broadcasting (all agents subscribe)
+   - Session manager for turn orchestration and state management
+   - Agents are independent services that emit/receive events
+   - Decoupled, scalable, clear separation of concerns
+
+4. **Message Schema:** JSON format with TypeScript interfaces
+   - Fields: `id`, `timestamp`, `agentId`, `agentType` (GM/PC), `agentName`, `agentMood`, `content`, `type` (narration/dialogue/system/dice-roll)
+   - Simple JSON serialization for debugging and compatibility
+
+5. **Real-time Communication:** Server-Sent Events (SSE) for Growth phase
+   - One-way server-to-client streaming
+   - Built-in reconnection, HTTP-based, simpler than WebSocket
+   - Suitable for observation-only UI
+
+6. **Chronicle Storage:** PostgreSQL tables with Prisma
+   - Structured relational approach with `Session`, `Message`, `DiceRoll`, `Event` tables
+   - Supports complex queries, relationships, and history retrieval
+   - Simpler than full event sourcing for MVP
+
+7. **Authentication & Authorization:** JWT-based with role claims for Growth phase
+   - Stateless, works well with MCP Server architecture
+   - Role claims (GM/PC) and agentId for per-PC character sheet access
+   - MCP client includes JWT in Streamable HTTP requests
+
+8. **Error Handling & Logging:** Hybrid approach
+   - MVP: Formatted console logs with clear formatting
+   - Growth: Structured logging with Pino (JSON format, correlation IDs, log levels)
+   - Graceful error handling with try-catch, retry logic for MCP connections
+
+9. **LLM Integration:** LangChain.js v0.3.33 with `@langchain/mcp-adapters`
+   - Provider-agnostic framework for LLM interactions
+   - MCP integration via `MultiServerMCPClient` for tool calling
+   - Supports agent orchestration patterns
+   - Note: v1.0 expected October 2025, plan migration accordingly
+
+**Important Decisions (Shape Architecture):**
+
+- **Naming Strategy:** 
+  - TypeScript/Prisma: PascalCase for models/classes, camelCase for properties
+  - Database: UPPER_SNAKE_CASE for tables, lower_snake_case for columns
+  - Implementation: Use `@@map` and `@map` in Prisma schema to enforce mapping
+  - Single point of enforcement through Prisma schema conventions
+
+**Deferred Decisions (Post-MVP):**
+
+- Specific LLM provider choice (OpenAI, Anthropic, etc.) - implementation decision, LangChain.js abstracts this
+- Web UI component library - Growth phase decision
+- Advanced monitoring/observability tools - Growth phase decision
+- Character sheet storage structure details - Growth phase decision
+
+### Data Architecture
+
+**Database:** PostgreSQL with Prisma 7.2.0
+- Type-safe queries and migrations
+- Naming strategy: PascalCase/camelCase in code, UPPER_SNAKE_CASE/lower_snake_case in database
+- Chronicle storage: Relational tables (`SESSIONS`, `MESSAGES`, `DICE_ROLLS`, `EVENTS`)
+
+### API & Communication Patterns
+
+**MCP Client:** @modelcontextprotocol/sdk v1.17.5
+- Streamable HTTP transport (no stdio)
+- Official TypeScript SDK for MCP protocol
+- Integrated via NestJS service/module
+
+**Real-time:** Server-Sent Events (SSE) for Growth phase
+- One-way streaming from backend to frontend
+- Built-in reconnection handling
+
+**Message Format:** JSON with TypeScript interfaces
+- Schema includes `agentName` and `agentMood` for future extensions
+
+### Agent Orchestration
+
+**Architecture:** Event-driven with message bus and session manager
+- Message bus for broadcasting to all agents
+- Centralized session manager for turn orchestration and state
+- Agents as independent services emitting/receiving events
+
+### LLM Integration
+
+**Framework:** LangChain.js v0.3.33 with `@langchain/mcp-adapters`
+- Provider-agnostic LLM interactions
+- MCP tool calling via `MultiServerMCPClient`
+- Supports agent orchestration patterns
+- Migration to v1.0 (October 2025) to be planned
+
+### Authentication & Security
+
+**Approach:** JWT-based with role claims (Growth phase)
+- Stateless authentication
+- Role claims (GM/PC) and agentId for authorization
+- MCP Server validates JWT and enforces resource access
+
+### Infrastructure & Deployment
+
+**Logging:** Hybrid approach
+- MVP: Formatted console logs
+- Growth: Structured logging with Pino (JSON format)
+
+**Error Handling:** Graceful degradation
+- Try-catch in agent orchestration
+- MCP client retry logic with exponential backoff
+- Session continues on non-critical errors
+
+### Decision Impact Analysis
+
+**Implementation Sequence:**
+
+1. Initialize NestJS backend with Prisma setup
+2. Set up MCP client service with @modelcontextprotocol/sdk
+3. Implement message bus and session manager
+4. Create agent services with LangChain.js integration
+5. Implement message schema and event system
+6. Add console logging for MVP
+7. Growth: Add SSE endpoint, chronicle storage, JWT auth, structured logging
+
+**Cross-Component Dependencies:**
+
+- MCP client depends on MCP servers being available (Python/FastMCP 3.0)
+- Agent services depend on LangChain.js and MCP client
+- Session manager coordinates message bus and agent services
+- Chronicle storage (Growth) depends on message schema and Prisma setup
+- SSE endpoint (Growth) depends on message bus for real-time updates
