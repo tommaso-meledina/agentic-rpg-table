@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional']
 inputDocuments: ['BRIEF.md']
 workflowType: 'prd'
 briefCount: 1
@@ -329,3 +329,82 @@ Jordan sees a link shared on social media: "Watch AI agents play D&D in real-tim
 - Real-time message streaming (WebSocket/SSE)
 - Session management (start new, view existing, resume from chronicle)
 - WCAG accessibility compliance
+
+## Functional Requirements
+
+### Agent Management
+
+- FR1: System can create and initialize a GM agent
+- FR2: System can create and initialize PC agents
+- FR3: System can configure agent personalities (Growth)
+- FR4: System can load agent configurations from YAML/database
+- FR5: System can manage multiple PC agents simultaneously (Growth)
+
+### Game Session Management
+
+- FR6: System can start a new game session
+- FR7: System can stop a game session
+- FR8: System can initialize a session with specified agents (GM and PC(s))
+- FR9: System can resume a game session from chronicle (Growth)
+- FR10: System can track session state and progress
+
+### Message Broadcasting & Communication
+
+- FR11: GM agent can send messages that all agents receive
+- FR12: PC agents can send messages that all agents receive
+- FR13: System can broadcast messages to all agents at the table
+- FR14: System can maintain message order and chronology
+- FR15: System can format messages with agent identity and timestamps
+
+### Rule System & Dice Rolling
+
+- FR16: System can perform dice rolls via MCP Server
+- FR17: System can access RPG rulebook content via MCP Server
+- FR18: Agents can request dice rolls and receive results
+- FR19: GM agent can request dice rolls for NPCs
+- FR20: System can enforce RPG rules during gameplay
+- FR21: Agents can reference rulebook content when making decisions
+
+### Resource Management (MCP Server)
+
+- FR22: System can connect to MCP Server hosting tools and resources
+- FR23: System can access deterministic operations (dice rolling) from MCP Server
+- FR24: System can access static resources (rulebooks, sourcebooks) from MCP Server
+- FR25: GM agent can access restricted resources (adventure plots, NPC stats) from MCP Server (Growth)
+- FR26: System can configure which MCP Server resources are available for a game session
+
+### Observation & Monitoring
+
+- FR27: Developers can observe agent messages via console/logs (MVP)
+- FR28: System can output messages to console/logs with clear formatting
+- FR29: System can display agent identity in console/log output
+- FR30: System can display dice roll results in console/log output
+- FR31: System can show system initialization status (agents loading, MCP Server connecting)
+- FR32: Users can observe agent messages via web UI in real-time (Growth)
+- FR33: Web UI can display messages chronologically as they occur (Growth)
+- FR34: Web UI can distinguish between GM narration, PC dialogue, and system events (Growth)
+- FR35: Web UI can stream messages in real-time as agents generate them (Growth)
+
+### Character System (Growth)
+
+- FR36: System can store and manage character sheets for PC agents
+- FR37: PC agents can access their own character sheet information
+- FR38: Character sheets can contain stats, background, and personality traits
+- FR39: Agents can play according to their character sheet information
+- FR40: System can differentiate between agent personality and character personality
+
+### Authentication & Authorization (Growth)
+
+- FR41: System can enforce resource access control based on agent role
+- FR42: All agents can access public resources (RPG rules)
+- FR43: Only GM agent can access restricted resources (adventure plots, NPC stats)
+- FR44: Each PC agent can access only their own character sheet
+- FR45: System can prevent unauthorized resource access
+
+### Session Persistence (Growth)
+
+- FR46: System can save session state to chronicle
+- FR47: System can load session state from chronicle
+- FR48: System can track complete session history
+- FR49: System can persist all relevant events from a session
+- FR50: Users can view session history via web UI (Growth)
